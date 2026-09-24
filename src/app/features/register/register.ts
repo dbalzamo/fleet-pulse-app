@@ -16,18 +16,16 @@ import { MatButtonModule } from '@angular/material/button';
 export class Register {
   private readonly authStore = inject(AuthStore);
   protected registerModel = signal<RegisterFormModel>({
-    name: '',
-    surname: '',
+    username: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
 
   protected registerForm = form(this.registerModel, (schemaPath) => {
-    // Name validation
-    required(schemaPath.name, { message: 'Name is required' });
-    // Surname validation
-    required(schemaPath.surname, { message: 'Surname is required' });
+    // Username validation
+    required(schemaPath.username, { message: 'Username is required' });
+    minLength(schemaPath.username, 4, { message: 'At least 4 characters' });
     // Email validation
     required(schemaPath.email, { message: 'Email is required' });
     email(schemaPath.email, { message: 'Enter a valid email' });

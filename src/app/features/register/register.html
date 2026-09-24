@@ -1,23 +1,12 @@
 <app-form-wrapper title="Register">
     <form [formRoot]="registerForm" class="row">
-        <div class="col-12 col-md-6">
+        <div class="col-12">
             <mat-form-field appearance="outline">
-                <mat-label>Name</mat-label>
-                <input matInput type="text" [formField]="registerForm.name">
+                <mat-label>Username</mat-label>
+                <input matInput type="text" [formField]="registerForm.username">
             </mat-form-field>
-            @if (registerForm.name().touched() && registerForm.name().invalid()) {
-            @for (error of registerForm.name().errors(); track error.message) {
-            <mat-error>{{error.message}}</mat-error>
-            }
-            }
-        </div>
-        <div class="col-12 col-md-6">
-            <mat-form-field appearance="outline">
-                <mat-label>Surname</mat-label>
-                <input matInput type="text" [formField]="registerForm.surname">
-            </mat-form-field>
-            @if (registerForm.surname().touched() && registerForm.surname().invalid()) {
-            @for (error of registerForm.surname().errors(); track error.message) {
+            @if (registerForm.username().touched() && registerForm.username().invalid()) {
+            @for (error of registerForm.username().errors(); track error.message) {
             <mat-error>{{error.message}}</mat-error>
             }
             }

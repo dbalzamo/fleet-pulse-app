@@ -4,11 +4,11 @@
         <form [formRoot]="loginForm" class="row">
             <div class="col-12">
                 <mat-form-field appearance="outline">
-                    <mat-label>Email</mat-label>
-                    <input matInput type="email" [formField]="loginForm.email">
+                    <mat-label>Username</mat-label>
+                    <input matInput type="text" [formField]="loginForm.username">
                 </mat-form-field>
-                @if (loginForm.email().touched() && loginForm.email().invalid()) {
-                @for(error of loginForm.email().errors(); track error.message){
+                @if (loginForm.username().touched() && loginForm.username().invalid()) {
+                @for(error of loginForm.username().errors(); track error.message){
                 <mat-error>{{error.message}}</mat-error>
                 }
                 }

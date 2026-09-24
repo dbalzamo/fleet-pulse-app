@@ -1,22 +1,20 @@
 import { TestBed } from '@angular/core/testing';
-import { LoginReq, RegisterReq, User } from '../../shared/models/auth-model';
+import { LoginReq, RegisterReq, AuthResponse } from '../../shared/models/auth-model';
 import { AuthService } from './auth-service';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { environment } from '../../../environments/envirornment-local';
-import { AuthStore } from '../stores/auth-store';
 import { provideHttpClient } from '@angular/common/http';
 
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
 
-  const ResponseLoginAndRegister: User = {
-    id: 1,
-    name: 'Jef',
-    surname: 'Azopp',
-    email: 'test@test.com',
-    createdAt: Date()
-  }
+  const fakeAuthResponse: AuthResponse = {
+    accessToken: 'fake-jwt-token',
+    refreshToken: 'fake-refresh-uuid',
+    tokenType: 'Bearer',
+    expiresIn: 900,
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -27,6 +25,11 @@ describe('AuthService', () => {
     });
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   it('should be created', () => {
@@ -36,40 +39,56 @@ describe('AuthService', () => {
   describe('Login', () => {
 
     const fakeUserLogin: LoginReq = {
-      email: 'test@test.com',
+      username: 'testuser',
       password: '12345678',
-    }
+    };
 
-    it('posts the credentials to the login endpoint sending cookies', () => {
+    it('posts the credentials to the login endpoint', () => {
       service.login(fakeUserLogin).subscribe((res) => {
-        expect(res).toEqual(ResponseLoginAndRegister);
+        expect(res).toEqual(fakeAuthResponse);
       });
 
       const req = httpMock.expectOne(`${environment.apiPath + environment.apiUrlAuth}/login`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(fakeUserLogin);
-      req.flush(ResponseLoginAndRegister);
+      req.flush(fakeAuthResponse);
     });
   });
 
   describe('Register', () => {
 
     const fakeUserRegister: RegisterReq = {
-      name: 'test',
-      surname: 'testTest',
+      username: 'testuser',
       email: 'test@email.test',
-      password: '12345678'
+      password: '12345678',
     };
 
     it('create user with register endpoint', () => {
       service.register(fakeUserRegister).subscribe((res) => {
-        expect(res).toEqual(ResponseLoginAndRegister);
+        expect(res).toEqual(fakeAuthResponse);
       });
       const req = httpMock.expectOne(`${environment.apiPath + environment.apiUrlAuth}/register`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(fakeUserRegister);
-      req.flush(ResponseLoginAndRegister);
+      req.flush(fakeAuthResponse);
+    });
+  });
+
+  describe('Token management', () => {
+    it('should save and load tokens', () => {
+      service.saveTokens(fakeAuthResponse);
+      expect(service.loadTokens()).toEqual(fakeAuthResponse);
     });
 
-  })
+    it('should clear tokens', () => {
+      service.saveTokens(fakeAuthResponse);
+      service.clearTokens();
+      expect(service.loadTokens()).toBeNull();
+    });
+
+    it('should return null when no tokens exist', () => {
+      expect(service.getAccessToken()).toBeNull();
+      expect(service.getRefreshToken()).toBeNull();
+    });
+  });
 });

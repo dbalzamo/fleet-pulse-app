@@ -34,33 +34,23 @@ describe('Register', () => {
     expect(submitBtn.disabled).toBeTruthy();
   });
 
-  it('should validate name format correctly', () => {
-    const nameField = component['registerForm'].name;
+  it('should validate username format correctly', () => {
+    const usernameField = component['registerForm'].username;
 
     // empty field
-    nameField().value.set('');
+    usernameField().value.set('');
     fixture.detectChanges();
-    expect(nameField().invalid()).toBeTruthy();
+    expect(usernameField().invalid()).toBeTruthy();
 
-    //valid field
-    nameField().value.set('Jhon');
+    // too short
+    usernameField().value.set('ab');
     fixture.detectChanges();
-    expect(nameField().valid()).toBeTruthy();
+    expect(usernameField().invalid()).toBeTruthy();
 
-  });
-
-  it('should validate surname format correctly', () => {
-    const surnameField = component['registerForm'].surname;
-
-    // set invalid field
-    surnameField().value.set('');
+    // valid field
+    usernameField().value.set('jhon');
     fixture.detectChanges();
-    expect(surnameField().invalid()).toBeTruthy();
-
-    // set valid field
-    surnameField().value.set('Jhon');
-    fixture.detectChanges();
-    expect(surnameField().valid()).toBeTruthy();
+    expect(usernameField().valid()).toBeTruthy();
   });
 
   it('should validate email format correctly', () => {
@@ -103,8 +93,7 @@ describe('Register', () => {
   it('should enable form and submit button when all fields are valid', () => {
     const form = component['registerForm'];
 
-    form.name().value.set('Jhon');
-    form.surname().value.set('Black');
+    form.username().value.set('jhon');
     form.email().value.set('jhon.black@example.com');
     form.password().value.set('password123');
     form.confirmPassword().value.set('password123');
@@ -120,15 +109,14 @@ describe('Register', () => {
   it('should call authStore.register on form submission with valid data', async () => {
     const form = component['registerForm'];
 
-    form.name().value.set('Jhon');
-    form.surname().value.set('Black');
+    form.username().value.set('jhon');
     form.email().value.set('jhon.black@example.com');
     form.password().value.set('password123');
     form.confirmPassword().value.set('password123');
 
     fixture.detectChanges();
 
-    // Send form throght dom element
+    // Send form through dom element
     const formElement = element.querySelector('form') as HTMLFormElement;
     formElement.dispatchEvent(new Event('submit'));
 
@@ -138,11 +126,9 @@ describe('Register', () => {
 
     expect(submitBtn).toContain('Register...');
 
-
     expect(mockAuthStore.register).toHaveBeenCalledTimes(1);
     expect(mockAuthStore.register).toHaveBeenCalledWith({
-      name: 'Jhon',
-      surname: 'Black',
+      username: 'jhon',
       email: 'jhon.black@example.com',
       password: 'password123',
     });
@@ -152,13 +138,12 @@ describe('Register', () => {
     const form = component['registerForm'];
 
     // Empty fields
-    form.name().value.set('');
-    form.surname().value.set('');
+    form.username().value.set('');
     form.email().value.set('');
     form.password().value.set('');
     form.confirmPassword().value.set('');
 
-    [form.name(), form.surname(), form.email(), form.password(), form.confirmPassword()].forEach(f => f.markAsTouched());
+    [form.username(), form.email(), form.password(), form.confirmPassword()].forEach(f => f.markAsTouched());
 
     fixture.detectChanges();
 
@@ -166,16 +151,14 @@ describe('Register', () => {
     let errorMessages = Array.from(matErrorElements).map(err => err.textContent?.trim());
 
     expect(errorMessages).toEqual([
-      'Name is required',
-      'Surname is required',
+      'Username is required',
       'Email is required',
       'Password is required',
       'Confirm Password is required',
     ]);
 
     // Invalid fields
-    form.name().value.set('Jhon');
-    form.surname().value.set('Black');
+    form.username().value.set('jh');
     form.email().value.set('invalid-email');
     form.password().value.set('123');
     form.confirmPassword().value.set('456');
@@ -186,6 +169,7 @@ describe('Register', () => {
     errorMessages = Array.from(matErrorElements).map(err => err.textContent?.trim());
 
     expect(errorMessages).toEqual([
+      'At least 4 characters',
       'Enter a valid email',
       'At least 8 characters',
       'Passwords do not match',

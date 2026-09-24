@@ -1,7 +1,6 @@
 export interface RegisterReq {
-    name: string;
-    surname: string;
     email: string;
+    username: string;
     password: string;
 }
 
@@ -9,22 +8,25 @@ export interface RegisterFormModel extends RegisterReq {
     confirmPassword: string;
 }
 
-export type LoginReq = Omit<RegisterReq, 'name' | 'surname'>;
+export interface LoginReq {
+    username: string;
+    password: string;
+}
 
-export interface User extends Omit<RegisterReq, 'password'> {
-    id: number;
-    //role:string;
-    createdAt: string;
+export interface AuthResponse {
+    accessToken: string;
+    refreshToken: string;
+    tokenType: string;
+    expiresIn: number;
+}
+
+export interface RefreshReq {
+    refreshToken: string;
 }
 
 export type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'unauthenticated';
 
-export interface AuthSate {
-    user: User | null;
+export interface AuthState {
+    tokens: AuthResponse | null;
     status: AuthStatus;
-}
-
-export interface SessionResponse {
-    authenticated: boolean;
-    user: User | null;
 }

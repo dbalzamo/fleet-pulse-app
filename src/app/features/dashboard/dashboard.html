@@ -1,1 +1,15 @@
-<p>dashboard works!</p>
+<main class="nav-dashboard">
+    <header class="nav-dashboard__header">
+        <h1>Dashboard</h1>
+        <p>Naviga direttamente verso le rotte dell'applicazione.</p>
+    </header>
+
+    <section class="nav-dashboard__grid">
+        <a mat-button routerLink="/fleet">Fleet</a>
+        <a mat-button routerLink="/fleet/veh-001">Fleet detail</a>
+        <a mat-button routerLink="/control-center">Control Center</a>
+        <a mat-button routerLink="/dashboard">Dashboard</a>
+        <a mat-button routerLink="/login">Login</a>
+        <a mat-button routerLink="/register">Register</a>
+    </section>
+</main>

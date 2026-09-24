@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { email, form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
+import { form, FormField, FormRoot, minLength, required } from '@angular/forms/signals';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { AuthStore } from '../../core/stores/auth-store';
 import { LoginReq } from '../../shared/models/auth-model';
@@ -17,14 +17,13 @@ import { MatButtonModule } from '@angular/material/button';
 export class Login {
   private readonly authStore = inject(AuthStore);
   protected loginModel = signal<LoginReq>({
-    email: '',
+    username: '',
     password: '',
   });
 
   protected loginForm = form(this.loginModel, (schemaPath) => {
-    // Email validation
-    required(schemaPath.email, { message: 'Email is required' });
-    email(schemaPath.email, { message: 'Enter a valid email' });
+    // Username validation
+    required(schemaPath.username, { message: 'Username is required' });
     // Password validation
     required(schemaPath.password, { message: 'Password is required' });
     minLength(schemaPath.password, 8, { message: 'At least 8 characters' });

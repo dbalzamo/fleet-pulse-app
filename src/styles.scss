@@ -14,6 +14,18 @@ html {
       typography: Roboto,
       density: 0,
     ));
+  --status-available: #2e6b4f;
+  --status-in_service: #1d5fa8;
+  --status-maintenance: #965f0f;
+  --status-charging: #0f766e;
+  --status-out_of_service: #8b1e2d;
+  --status-ok: #2e6b4f;
+  --status-attention: #b45309;
+  --status-emergency: #ba1a1a;
+  --fleet-radius: 16px;
+  --fleet-muted: #5f6368;
+  --fleet-border: color-mix(in srgb, var(--mat-sys-on-surface) 12%, transparent);
+  --fleet-bg: color-mix(in srgb, var(--mat-sys-surface-container) 65%, transparent);
 }
 
 body {
@@ -48,4 +60,41 @@ body {
       supporting-text-color: #ffffff,
     ));
   --mat-snack-bar-button-color: #b8f0d0;
+}
+
+/* ================= MAP (Leaflet) ================= */
+/* Markers are injected by Leaflet as raw HTML (outside Angular emulated
+   encapsulation), so their styles live here globally. */
+.vehicle-marker {
+  --sc: var(--status-ok);
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--sc);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: width 0.15s ease, height 0.15s ease;
+}
+
+.vehicle-marker--selected {
+  width: 20px;
+  height: 20px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--sc) 30%, transparent);
+}
+
+.map-shell .leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--fleet-radius);
+  font-family: var(--mat-sys-body-medium);
+}
+
+.map-shell .leaflet-control-attribution {
+  font-size: 10px;
+  color: var(--fleet-muted);
+}
+
+.map-shell .leaflet-control-zoom a {
+  color: var(--mat-sys-on-surface);
 }

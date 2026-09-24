@@ -20,6 +20,21 @@ export const routes: Routes = [
         canActivate: [authGuard],
     },
     {
+        path: 'fleet',
+        loadComponent: () => import('./features/fleet/dashboard/fleet-dashboard').then(c => c.FleetDashboard),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'fleet/:id',
+        loadComponent: () => import('./features/fleet/details/fleet-details').then(c => c.FleetDetails),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'control-center',
+        loadComponent: () => import('./features/control-center/control-center').then(c => c.ControlCenterComponent),
+        canActivate: [authGuard],
+    },
+    {
         path: '',
         pathMatch: 'full',
         redirectTo: 'login',

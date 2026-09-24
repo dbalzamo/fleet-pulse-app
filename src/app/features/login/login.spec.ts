@@ -35,18 +35,18 @@ describe('Login', () => {
     expect(submitBtn.disabled).toBeTruthy();
   });
 
-  it('should validate email format correctly', () => {
-    const emailField = component['loginForm'].email;
+  it('should validate username correctly', () => {
+    const usernameField = component['loginForm'].username;
 
-    // set invalid email
-    emailField().value.set('test-invalid-data');
+    // empty field
+    usernameField().value.set('');
     fixture.detectChanges();
-    expect(emailField().invalid()).toBeTruthy();
+    expect(usernameField().invalid()).toBeTruthy();
 
-    // set valid email
-    emailField().value.set('test@test');
+    // set valid username
+    usernameField().value.set('testuser');
     fixture.detectChanges();
-    expect(emailField().valid()).toBeTruthy();
+    expect(usernameField().valid()).toBeTruthy();
   });
 
   it('should validate password format correctly', () => {
@@ -68,11 +68,11 @@ describe('Login', () => {
   it('should call authStore.login on form submission with valid data', async () => {
     const form = component['loginForm'];
 
-    form.email().value.set('jhon.black@example.com');
+    form.username().value.set('jhon.black');
     form.password().value.set('password123');
 
     fixture.detectChanges();
-    // Send form throght dom element
+    // Send form through dom element
     const formElement = element.querySelector('form') as HTMLFormElement;
     formElement.dispatchEvent(new Event('submit'));
 
@@ -84,7 +84,7 @@ describe('Login', () => {
 
     expect(mockAuthStore.login).toHaveBeenCalledTimes(1);
     expect(mockAuthStore.login).toHaveBeenCalledWith({
-      email: 'jhon.black@example.com',
+      username: 'jhon.black',
       password: 'password123',
     });
   });
@@ -93,8 +93,8 @@ describe('Login', () => {
     const form = component['loginForm'];
 
     // Empty fields
-    form.email().value.set('');
-    form.email().markAsTouched();
+    form.username().value.set('');
+    form.username().markAsTouched();
 
     form.password().value.set('');
     form.password().markAsTouched();
@@ -105,22 +105,8 @@ describe('Login', () => {
     let errorMessages = Array.from(matErrorElements).map(err => err.textContent?.trim());
 
     expect(errorMessages).toEqual([
-      'Email is required',
+      'Username is required',
       'Password is required',
-    ]);
-
-    // Invalid fields
-    form.email().value.set('invalid-email');
-    form.password().value.set('123');
-
-    fixture.detectChanges();
-
-    matErrorElements = element.querySelectorAll('mat-error');
-    errorMessages = Array.from(matErrorElements).map(err => err.textContent?.trim());
-
-    expect(errorMessages).toEqual([
-      'Enter a valid email',
-      'At least 8 characters',
     ]);
   });
 });
