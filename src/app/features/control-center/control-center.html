@@ -1,0 +1,44 @@
+<main class="control-center">
+    <header class="control-center__hero">
+        <div>
+            <h1>Control Center</h1>
+            <p>Real-time map and tracking of vehicles on the road.</p>
+        </div>
+        <span
+            class="control-center__status"
+            [class.control-center__status--connected]="connectionStatus() === 'connected'"
+            [class.control-center__status--polling]="connectionStatus() === 'polling'"
+            [class.control-center__status--disconnected]="connectionStatus() === 'disconnected'"
+        >
+            <i></i>{{ connectionLabel() }}
+        </span>
+    </header>
+
+    @if (vehicles().length === 0) {
+    <div class="control-center__empty">
+        @if (connectionStatus() === 'disconnected') {
+        <p>Live tracking is unavailable right now. Check the connection and try again.</p>
+        } @else {
+        <p>No vehicles are currently on the road.</p>
+        }
+    </div>
+    } @else {
+    <div class="control-center__layout">
+        <section class="control-center__map">
+            <app-fleet-map
+                [vehicles]="vehicles()"
+                [selectedVehicleId]="selectedVehicleId()"
+                (vehicleSelect)="selectVehicle($event)"
+            />
+        </section>
+        <aside class="control-center__side">
+            <app-active-vehicle-list
+                [vehicles]="vehicles()"
+                [selectedVehicleId]="selectedVehicleId()"
+                (select)="selectVehicle($event)"
+            />
+            <app-emergency-actions-panel [selectedVehicle]="selectedVehicle()" />
+        </aside>
+    </div>
+    }
+</main>

@@ -1,0 +1,68 @@
+<main class="fleet-dashboard">
+    <header class="fleet-dashboard__hero">
+        <div>
+            <h1>Fleet Overview</h1>
+            <p>Monitor robotaxi status, battery level and estimated autonomy.</p>
+        </div>
+        <button matButton="tonal" type="button" (click)="openAddVehicle()">Add Vehicle</button>
+    </header>
+
+    <section class="fleet-dashboard__metrics">
+        <app-fleet-metrics [metrics]="metrics()" [loading]="loading()" />
+    </section>
+
+    <section class="fleet-dashboard__tools">
+        <mat-form-field appearance="outline" class="fleet-dashboard__search">
+            <mat-label>Search</mat-label>
+            <input matInput type="text" placeholder="Model or VIN..." [(ngModel)]="searchQuery" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="fleet-dashboard__status">
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="statusFilter">
+                @for (status of statuses; track status) {
+                <mat-option [value]="status">{{ statusLabels[status] }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <button mat-button type="button" (click)="resetFilters()" [disabled]="!isFiltersActive()">Reset</button>
+    </section>
+
+    @if (loading()) {
+    <div class="fleet-dashboard__loading">
+        <mat-progress-spinner mode="indeterminate" diameter="48" />
+        <p>Loading fleet data...</p>
+    </div>
+    } @else if (error() !== null) {
+    <div class="fleet-dashboard__state">
+        <p>{{ error() }}</p>
+        <button matButton="tonal" type="button" (click)="reload()">Retry</button>
+    </div>
+    } @else if (vehicles().length === 0) {
+    <div class="fleet-dashboard__state">
+        @if (isFiltersActive()) {
+        <p>No vehicle matches the current filters.</p>
+        <button mat-button type="button" (click)="resetFilters()">Reset filters</button>
+        } @else {
+        <p>Your fleet is empty.</p>
+        <button matButton="tonal" type="button" (click)="openAddVehicle()">Add first vehicle</button>
+        }
+    </div>
+    } @else {
+    <div class="fleet-dashboard__grid">
+        @for (vehicle of vehicles(); track vehicle.id) {
+        <app-vehicle-card
+            [vehicle]="vehicle"
+            [removing]="isRemoving(vehicle.id)"
+            (details)="goToDetails(vehicle)"
+            (remove)="removeVehicle(vehicle)"
+        />
+        }
+    </div>
+
+    <footer class="fleet-dashboard__count">
+        Showing {{ vehicles().length }} of {{ totalVehicles() }} vehicles
+    </footer>
+    }
+</main>

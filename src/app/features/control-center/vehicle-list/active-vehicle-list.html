@@ -1,0 +1,11 @@
+<section class="vehicle-list" aria-label="Active vehicles">
+    @for (vehicle of vehicles(); track vehicle.id) {
+    <app-active-vehicle-cell
+        [vehicle]="vehicle"
+        [selected]="vehicle.id === selectedVehicleId()"
+        (select)="onSelect($event)"
+    />
+    } @empty {
+    <p class="vehicle-list__empty">No vehicles are currently on the road.</p>
+    }
+</section>

@@ -1,0 +1,41 @@
+<section class="actions-panel">
+    <header class="actions-panel__header">
+        <h2>Actions</h2>
+        <p class="actions-panel__hint">
+            @if (selectedVehicle(); as vehicle) {
+            Commands for <strong>{{ vehicle.id }}</strong>
+            } @else {
+            Select a vehicle to enable commands.
+            }
+        </p>
+    </header>
+
+    @if (selectedVehicle(); as vehicle) {
+    <div class="actions-panel__grid">
+        @for (action of actions; track action) {
+        @if (action === 'emergency_stop') {
+        <button
+            type="button"
+            class="actions-panel__button actions-panel__button--danger"
+            [disabled]="sending()"
+            (click)="requestAction(action)"
+        >
+            @if (pendingAction() === action) {
+            <mat-progress-spinner mode="indeterminate" diameter="18" />
+            }
+            {{ actionLabels[action] }}
+        </button>
+        } @else {
+        <button matButton="tonal" type="button" class="actions-panel__button" [disabled]="sending()" (click)="requestAction(action)">
+            @if (pendingAction() === action) {
+            <mat-progress-spinner mode="indeterminate" diameter="18" />
+            }
+            {{ actionLabels[action] }}
+        </button>
+        }
+        }
+    </div>
+    } @else {
+    <p class="actions-panel__empty">Select a vehicle from the list or the map to enable commands.</p>
+    }
+</section>

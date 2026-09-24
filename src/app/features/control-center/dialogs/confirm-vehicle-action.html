@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Confirm command</h2>
+
+<mat-dialog-content>
+    <p class="confirm-action__summary">
+        <strong>{{ data.vehicleId }}</strong> &ndash; {{ actionLabel() }}
+    </p>
+    <p class="confirm-action__consequence">{{ consequences() }}</p>
+
+    @if (requiresTyping()) {
+    <mat-form-field appearance="outline" class="confirm-action__typed">
+        <mat-label>Type vehicle ID to confirm</mat-label>
+        <input
+            matInput
+            type="text"
+            placeholder="{{ data.vehicleId }}"
+            [ngModel]="typedVehicleId()"
+            (ngModelChange)="typedVehicleId.set($event)"
+        />
+    </mat-form-field>
+    }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Cancel</button>
+    <button matButton="tonal" type="button" [disabled]="!canConfirm()" (click)="confirm()">Confirm</button>
+</mat-dialog-actions>

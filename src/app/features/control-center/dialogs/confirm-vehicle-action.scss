@@ -1,0 +1,19 @@
+.confirm-action__summary {
+    margin: 0 0 8px;
+    font-size: 15px;
+
+    strong {
+        font-weight: 500;
+    }
+}
+
+.confirm-action__consequence {
+    margin: 0;
+    font-size: 13px;
+    color: var(--fleet-muted);
+}
+
+.confirm-action__typed {
+    margin-top: 16px;
+    width: 100%;
+}

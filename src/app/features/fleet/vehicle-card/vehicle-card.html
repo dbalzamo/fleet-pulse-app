@@ -1,0 +1,36 @@
+<article class="vehicle-card" [class.vehicle-card--removing]="removing()">
+    <header class="vehicle-card__top">
+        <div class="vehicle-card__model">{{ vehicle().model }}</div>
+        <span class="status-badge" [style.--sc]="statusColor(vehicle().status)">{{ statusLabels[vehicle().status] }}</span>
+    </header>
+
+    <p class="vehicle-card__vin">{{ vehicle().vin }}</p>
+
+    <p class="vehicle-card__range">
+        <strong>{{ vehicle().estimatedRangeKm }}</strong>
+        <span>km est. autonomy</span>
+    </p>
+
+    <div class="vehicle-card__battery">
+        <div class="vehicle-card__battery-meta">
+            <span>Battery</span>
+            <span>{{ vehicle().batteryPercentage }}%</span>
+        </div>
+        <div class="vehicle-card__battery-track">
+            <div class="vehicle-card__battery-fill"
+                 [style.--sc]="statusColor(vehicle().status)"
+                 [style.width.%]="vehicle().batteryPercentage"></div>
+        </div>
+    </div>
+
+    <footer class="vehicle-card__actions">
+        <button matButton="tonal" type="button" (click)="onDetails()" [disabled]="removing()">Details</button>
+        <button mat-button type="button" (click)="onRemove()" [disabled]="removing()">Remove</button>
+    </footer>
+
+    @if (removing()) {
+    <div class="vehicle-card__overlay">
+        <mat-progress-spinner mode="indeterminate" diameter="36" />
+    </div>
+    }
+</article>

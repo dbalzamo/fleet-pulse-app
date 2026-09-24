@@ -1,0 +1,12 @@
+<button
+    type="button"
+    class="vehicle-cell"
+    [class.vehicle-cell--selected]="selected()"
+    (click)="select.emit(vehicle())"
+>
+    <span class="vehicle-cell__dot" [style.--sc]="statusColor(vehicle().status)"></span>
+    <span class="vehicle-cell__id">{{ vehicle().id }}</span>
+    <span class="status-badge" [style.--sc]="statusColor(vehicle().status)">{{ statusLabels[vehicle().status] }}</span>
+    <span class="vehicle-cell__eta">{{ vehicle().etaMinutes }} min</span>
+    <span class="vehicle-cell__distance">{{ vehicle().remainingDistanceKm }} km</span>
+</button>

@@ -1,0 +1,31 @@
+<section class="fleet-metrics" [class.fleet-metrics--loading]="loading()">
+    <div class="metric">
+        <span class="metric__label">Total</span>
+        <strong class="metric__value">{{ metrics().total }}</strong>
+    </div>
+    <div class="metric">
+        <span class="metric__dot" style="background: var(--status-available)"></span>
+        <span class="metric__label">Available</span>
+        <strong class="metric__value">{{ metrics().available }}</strong>
+    </div>
+    <div class="metric">
+        <span class="metric__dot" style="background: var(--status-in_service)"></span>
+        <span class="metric__label">In Service</span>
+        <strong class="metric__value">{{ metrics().inService }}</strong>
+    </div>
+    <div class="metric">
+        <span class="metric__dot" style="background: var(--status-maintenance)"></span>
+        <span class="metric__label">Maintenance</span>
+        <strong class="metric__value">{{ metrics().maintenance }}</strong>
+    </div>
+    <div class="metric">
+        <span class="metric__dot" style="background: var(--status-charging)"></span>
+        <span class="metric__label">Charging</span>
+        <strong class="metric__value">{{ metrics().charging }}</strong>
+    </div>
+    <div class="metric">
+        <span class="metric__label">Avg battery</span>
+        <strong class="metric__value">{{ metrics().averageBattery }}%</strong>
+        <span class="metric__sub">≈ {{ metrics().averageRangeKm }} km</span>
+    </div>
+</section>

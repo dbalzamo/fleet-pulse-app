@@ -1,0 +1,15 @@
+<div class="map-shell">
+    <div #mapContainer class="fleet-map" aria-label="Live fleet map"></div>
+    <div class="fleet-map__legend" aria-hidden="true">
+        <span class="fleet-map__legend-title">Status</span>
+        <span class="fleet-map__legend-item">
+            <i [style.--sc]="legendItems[0].color"></i>{{ legendItems[0].label }}
+        </span>
+        <span class="fleet-map__legend-item">
+            <i [style.--sc]="legendItems[1].color"></i>{{ legendItems[1].label }}
+        </span>
+        <span class="fleet-map__legend-item">
+            <i [style.--sc]="legendItems[2].color"></i>{{ legendItems[2].label }}
+        </span>
+    </div>
+</div>

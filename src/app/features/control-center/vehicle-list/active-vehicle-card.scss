@@ -1,0 +1,67 @@
+.vehicle-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--fleet-border);
+    border-radius: var(--fleet-radius);
+    background: var(--fleet-bg);
+    color: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+
+    &:hover {
+        border-color: color-mix(in srgb, var(--mat-sys-primary) 45%, var(--fleet-border));
+    }
+
+    &--selected {
+        border: 2px solid var(--mat-sys-primary);
+        padding: 11px 13px;
+        background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+    }
+}
+
+.vehicle-cell__dot {
+    --sc: var(--status-ok);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--sc);
+    flex-shrink: 0;
+}
+
+.vehicle-cell__id {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status-badge {
+    --sc: var(--status-ok);
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--sc);
+    background: color-mix(in srgb, var(--sc) 14%, transparent);
+    white-space: nowrap;
+}
+
+.vehicle-cell__eta,
+.vehicle-cell__distance {
+    color: var(--fleet-muted);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.vehicle-cell__eta {
+    margin-left: auto;
+}
+
+.vehicle-cell__distance::before {
+    content: '· ';
+    margin-right: 2px;
+    color: var(--fleet-border);
+}

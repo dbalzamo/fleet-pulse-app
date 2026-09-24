@@ -1,0 +1,108 @@
+.vehicle-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border-radius: var(--fleet-radius);
+    border: 1px solid var(--fleet-border);
+    background: var(--fleet-bg);
+
+    &--removing {
+        pointer-events: none;
+    }
+}
+
+.vehicle-card__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.vehicle-card__model {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.vehicle-card__vin {
+    margin: 0;
+    font-size: 12px;
+    color: var(--fleet-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.status-badge {
+    --sc: var(--status-available);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sc);
+    background: color-mix(in srgb, var(--sc) 14%, transparent);
+    white-space: nowrap;
+}
+
+.vehicle-card__range {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    color: var(--fleet-muted);
+
+    strong {
+        font-size: 22px;
+        color: inherit;
+    }
+
+    span {
+        font-size: 12px;
+    }
+}
+
+.vehicle-card__battery {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.vehicle-card__battery-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--fleet-muted);
+}
+
+.vehicle-card__battery-track {
+    height: 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--mat-sys-on-surface) 12%, transparent);
+    overflow: hidden;
+}
+
+.vehicle-card__battery-fill {
+    --sc: var(--status-available);
+    height: 100%;
+    border-radius: 999px;
+    background: var(--sc);
+    transition: width 0.5s ease;
+}
+
+.vehicle-card__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.vehicle-card__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--fleet-radius);
+    background: color-mix(in srgb, var(--mat-sys-surface) 70%, transparent);
+}
