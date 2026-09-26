@@ -1,0 +1,28 @@
+<main class="payments">
+    <header class="payments__hero">
+        <div>
+            <h1>Pagamenti e clienti</h1>
+            <p>Incassi, transazioni e anagrafica dei clienti del servizio.</p>
+        </div>
+    </header>
+
+    @if (metricsError()) {
+        <div class="payments__metrics-error">
+            <p>Impossibile caricare le metriche dei pagamenti.</p>
+            <button matButton="tonal" type="button" (click)="reloadSummary()">Riprova</button>
+        </div>
+    } @else {
+        <section class="payments__metrics">
+            <app-payments-metrics [summary]="summary()" [loading]="metricsLoading()" />
+        </section>
+    }
+
+    <div class="payments__layout">
+        <section class="payments__transactions">
+            <app-transactions-list />
+        </section>
+        <aside class="payments__customers">
+            <app-customer-list />
+        </aside>
+    </div>
+</main>

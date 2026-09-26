@@ -5,26 +5,33 @@ import { ActiveVehicle, TrackingConnectionStatus } from '../../shared/models/tra
 import { ControlCenterComponent } from './control-center';
 
 const mocks = vi.hoisted(() => {
+  const popupApi = { setContent: vi.fn(() => popupApi) };
   const markerApi = {
     addTo: vi.fn(() => markerApi),
     remove: vi.fn(() => markerApi),
     setLatLng: vi.fn(() => markerApi),
     setIcon: vi.fn(() => markerApi),
     getLatLng: vi.fn(() => ({ lat: 45.47, lng: 9.2 })),
+    bindPopup: vi.fn(() => markerApi),
+    openPopup: vi.fn(() => markerApi),
     on: vi.fn(() => markerApi),
   };
   const mapApi = {
     setView: vi.fn(() => mapApi),
     fitBounds: vi.fn(() => mapApi),
+    panTo: vi.fn(() => mapApi),
+    closePopup: vi.fn(() => mapApi),
     remove: vi.fn(() => mapApi),
   };
   return {
+    popupApi,
     markerApi,
     mapApi,
     marker: vi.fn(() => markerApi),
     map: vi.fn(() => mapApi),
     tileLayer: vi.fn(() => ({ addTo: vi.fn() })),
     divIcon: vi.fn(() => ({})),
+    popup: vi.fn(() => popupApi),
     latLngBounds: vi.fn(() => ({ pad: vi.fn(() => ({})) })),
     polyline: vi.fn(() => ({ addTo: vi.fn(), remove: vi.fn() })),
   };
@@ -35,6 +42,7 @@ vi.mock('leaflet', () => ({
   marker: mocks.marker,
   tileLayer: mocks.tileLayer,
   divIcon: mocks.divIcon,
+  popup: mocks.popup,
   latLngBounds: mocks.latLngBounds,
   polyline: mocks.polyline,
 }));
@@ -42,7 +50,12 @@ vi.mock('leaflet', () => ({
 describe('ControlCenterComponent', () => {
   let fixture: ComponentFixture<ControlCenterComponent>;
   let component: ControlCenterComponent;
-  let trackingMock: { positions: WritableSignal<ActiveVehicle[]>; status: WritableSignal<TrackingConnectionStatus> };
+  let trackingMock: {
+    positions: WritableSignal<ActiveVehicle[]>;
+    status: WritableSignal<TrackingConnectionStatus>;
+    start: ReturnType<typeof vi.fn>;
+    stop: ReturnType<typeof vi.fn>;
+  };
 
   const vehicles: ActiveVehicle[] = [
     {
@@ -50,6 +63,8 @@ describe('ControlCenterComponent', () => {
       status: 'in_service',
       latitude: 45.47,
       longitude: 9.2,
+      heading: 90,
+      batteryPercentage: 87,
       etaMinutes: 12,
       remainingDistanceKm: 6.4,
     },
@@ -58,13 +73,20 @@ describe('ControlCenterComponent', () => {
       status: 'emergency',
       latitude: 45.46,
       longitude: 9.19,
+      heading: 180,
+      batteryPercentage: 14,
       etaMinutes: 20,
       remainingDistanceKm: 9.0,
     },
   ];
 
   beforeEach(async () => {
-    trackingMock = { positions: signal(vehicles), status: signal<TrackingConnectionStatus>('connected') };
+    trackingMock = {
+      positions: signal(vehicles),
+      status: signal<TrackingConnectionStatus>('connected'),
+      start: vi.fn(),
+      stop: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [ControlCenterComponent],

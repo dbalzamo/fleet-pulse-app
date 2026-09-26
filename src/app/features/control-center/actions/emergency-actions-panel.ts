@@ -5,7 +5,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NotificationService } from '../../../core/services/notification-service';
 import { VehicleActionsService } from '../../../core/services/vehicle-actions-service';
-import { ACTION_LABELS, ActiveVehicle, EmergencyAction, VehicleActionRequest } from '../../../shared/models/tracking-model';
+import {
+    ACTIVE_VEHICLE_STATUS_COLORS,
+    ACTIVE_VEHICLE_STATUS_LABELS,
+    ACTION_LABELS,
+    ActiveVehicle,
+    ActiveVehicleStatus,
+    EmergencyAction,
+    VehicleActionRequest,
+} from '../../../shared/models/tracking-model';
 import { ConfirmVehicleActionComponent } from '../dialogs/confirm-vehicle-action';
 
 @Component({
@@ -34,6 +42,14 @@ export class EmergencyActionsPanelComponent {
 
     protected readonly pendingAction = signal<EmergencyAction | null>(null);
     protected readonly sending = computed(() => this.pendingAction() !== null);
+
+    protected statusColor(status: ActiveVehicleStatus): string {
+        return ACTIVE_VEHICLE_STATUS_COLORS[status];
+    }
+
+    protected statusLabel(status: ActiveVehicleStatus): string {
+        return ACTIVE_VEHICLE_STATUS_LABELS[status];
+    }
 
     protected requestAction(action: EmergencyAction): void {
         const vehicle = this.selectedVehicle();

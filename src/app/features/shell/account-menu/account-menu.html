@@ -1,0 +1,41 @@
+<div
+    class="account-menu"
+    appClickOutside
+    (appClickOutside)="close()"
+>
+    <button
+        type="button"
+        class="account-menu__trigger"
+        [attr.aria-haspopup]="'menu'"
+        [attr.aria-expanded]="isOpen()"
+        [attr.aria-label]="'Account menu'"
+        (click)="toggle()"
+    >
+        @if (user()?.avatarUrl) {
+            <img class="account-menu__avatar" [src]="user()?.avatarUrl" alt="" />
+        } @else {
+            <span class="account-menu__avatar account-menu__avatar--fallback">{{ initial() }}</span>
+        }
+    </button>
+
+    @if (isOpen()) {
+        <div class="account-menu__dropdown" role="menu">
+            <div class="account-menu__header">
+                <strong class="account-menu__name">{{ user()?.name ?? 'Guest' }}</strong>
+                <span class="account-menu__role">{{ user()?.role ?? '' }}</span>
+            </div>
+            <a class="account-menu__item" role="menuitem" [routerLink]="'/account'" (click)="close()">
+                <mat-icon aria-hidden="true">account_circle</mat-icon>
+                <span>Il mio account</span>
+            </a>
+            <a class="account-menu__item" role="menuitem" [routerLink]="'/settings'" (click)="close()">
+                <mat-icon aria-hidden="true">settings</mat-icon>
+                <span>Impostazioni</span>
+            </a>
+            <button type="button" class="account-menu__item account-menu__item--danger" role="menuitem" (click)="onLogout()">
+                <mat-icon aria-hidden="true">logout</mat-icon>
+                <span>Esci</span>
+            </button>
+        </div>
+    }
+</div>

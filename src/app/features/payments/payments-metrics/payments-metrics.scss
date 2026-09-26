@@ -1,0 +1,52 @@
+.payments-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    transition: opacity 0.25s ease;
+
+    &--loading {
+        opacity: 0.5;
+    }
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 18px 20px;
+    border-radius: var(--fleet-radius);
+    border: 1px solid var(--fleet-border);
+    background: var(--fleet-bg);
+
+    &__label {
+        font-size: 13px;
+        color: var(--fleet-muted);
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+    }
+
+    &__value {
+        font-size: 28px;
+        line-height: 1.1;
+    }
+
+    &--danger {
+        border-color: color-mix(in srgb, var(--color-danger) 45%, transparent);
+
+        .metric__value {
+            color: var(--color-danger-text);
+        }
+    }
+}
+
+@media (max-width: 1200px) {
+    .payments-metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .payments-metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

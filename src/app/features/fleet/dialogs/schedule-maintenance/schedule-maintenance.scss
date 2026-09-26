@@ -1,0 +1,14 @@
+.schedule-maintenance__form {
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    mat-form-field {
+        width: 100%;
+    }
+}
+
+.schedule-maintenance__submit {
+    margin-top: 12px;
+}

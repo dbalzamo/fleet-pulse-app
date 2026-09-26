@@ -1,4 +1,7 @@
-<div class="map-shell">
+<div
+    class="map-shell"
+    [class.map-shell--compact]="compact()"
+>
     <div #mapContainer class="fleet-map" aria-label="Live fleet map"></div>
     <div class="fleet-map__legend" aria-hidden="true">
         <span class="fleet-map__legend-title">Status</span>

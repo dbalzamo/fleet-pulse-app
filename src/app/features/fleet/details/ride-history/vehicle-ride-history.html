@@ -1,0 +1,59 @@
+<section class="ride-history">
+    <header class="ride-history__header">
+        <h2>Ride history</h2>
+        @if (rides().length > 0) {
+        <span class="ride-history__count">{{ rides().length }} of {{ totalElements() }} rides</span>
+        }
+    </header>
+
+    @if (error(); as message) {
+    <p class="ride-history__state">{{ message }}</p>
+    } @else if (rides().length === 0) {
+    @if (loading()) {
+    <div class="ride-history__state">
+        <mat-progress-spinner mode="indeterminate" diameter="24" />
+        <span>Loading rides...</span>
+    </div>
+    } @else {
+    <p class="ride-history__state">No rides recorded for this vehicle.</p>
+    }
+    } @else {
+    <table class="ride-history__table">
+        <thead>
+            <tr>
+                <th scope="col">Ride</th>
+                <th scope="col">Date</th>
+                <th scope="col">Duration</th>
+                <th scope="col">Outcome</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (ride of rides(); track ride.rideId) {
+            <tr>
+                <td class="ride-history__id">{{ ride.rideId }}</td>
+                <td>{{ rideDate(ride.date) }}</td>
+                <td class="ride-history__duration">{{ ride.durationMinutes }} min</td>
+                <td>
+<span class="ride-history__outcome"
+                            [style.--sc]="outcomeColor(ride.outcome)"
+                            [style.--sc-bg]="outcomeBg(ride.outcome)"
+                            [style.--sc-text]="outcomeText(ride.outcome)">
+                            {{ outcomeLabels[ride.outcome] }}
+                        </span>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (hasMore()) {
+    <button matButton="tonal" class="ride-history__more" type="button" [disabled]="loading()" (click)="loadMore.emit()">
+        @if (loading()) {
+        <mat-progress-spinner mode="indeterminate" diameter="18" />
+        } @else {
+        Load more
+        }
+    </button>
+    }
+    }
+</section>

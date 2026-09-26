@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { VEHICLE_STATUS_COLORS, VEHICLE_STATUS_LABELS, Vehicle, VehicleStatus } from '../../../shared/models/vehicle-model';
+import { VEHICLE_STATUS_COLORS, VEHICLE_STATUS_COLORS_BG, VEHICLE_STATUS_COLORS_TEXT, VEHICLE_STATUS_LABELS, Vehicle, VehicleStatus } from '../../../shared/models/vehicle-model';
 
 @Component({
     selector: 'app-vehicle-card',
@@ -20,6 +20,14 @@ export class VehicleCardComponent {
 
     protected statusColor(status: VehicleStatus): string {
         return VEHICLE_STATUS_COLORS[status];
+    }
+
+    protected statusBg(status: VehicleStatus): string {
+        return VEHICLE_STATUS_COLORS_BG[status];
+    }
+
+    protected statusText(status: VehicleStatus): string {
+        return VEHICLE_STATUS_COLORS_TEXT[status];
     }
 
     protected onDetails(): void {

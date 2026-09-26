@@ -1,12 +1,12 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { catchError, concatMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth-service';
+import { AuthStore } from '../stores/auth-store';
 import { environment } from '../../../environments/envirornment-local';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router);
+  const authStore = inject(AuthStore);
   const authService = inject(AuthService);
   const baseUrlAuth: string = environment.apiPath + environment.apiUrlAuth;
 
@@ -45,14 +45,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
               return next(retryReq);
             }),
             catchError(() => {
-              authService.clearTokens();
-              router.navigate(['/login']);
+              authStore.invalidateSession();
               return throwError(() => error);
             })
           );
         }
-        authService.clearTokens();
-        router.navigate(['/login']);
+        authStore.invalidateSession();
       }
 
       return throwError(() => error);

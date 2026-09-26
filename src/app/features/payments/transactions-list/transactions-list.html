@@ -1,0 +1,74 @@
+<section class="transactions">
+    <header class="transactions__header">
+        <h2 class="transactions__title">Transazioni recenti</h2>
+        <div class="transactions__filters">
+            <mat-form-field appearance="outline" class="transactions__date">
+                <mat-label>Dal</mat-label>
+                <input matInput type="date" [(ngModel)]="fromDate" aria-label="Data inizio" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="transactions__date">
+                <mat-label>Al</mat-label>
+                <input matInput type="date" [(ngModel)]="toDate" aria-label="Data fine" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="transactions__status">
+                <mat-label>Stato</mat-label>
+                <mat-select [(ngModel)]="statusFilter" aria-label="Stato pagamento">
+                    @for (status of statuses; track status) {
+                        <mat-option [value]="status">{{ statusLabels[status] }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+            <button mat-button type="button" (click)="resetFilters()" [disabled]="!isFiltersActive()">Reset</button>
+        </div>
+    </header>
+
+    @if (loading()) {
+        <div class="transactions__loading">
+            <mat-progress-spinner mode="indeterminate" diameter="48" />
+            <p>Caricamento transazioni...</p>
+        </div>
+    } @else if (error() !== null) {
+        <div class="transactions__state">
+            <p>{{ error() }}</p>
+            <button matButton="tonal" type="button" (click)="reload()">Riprova</button>
+        </div>
+    } @else if (transactions().length === 0) {
+        <div class="transactions__state">
+            @if (isFiltersActive()) {
+                <p>Nessuna transazione corrisponde ai filtri.</p>
+                <button mat-button type="button" (click)="resetFilters()">Azzera filtri</button>
+            } @else {
+                <p>Nessuna transazione registrata.</p>
+            }
+        </div>
+    } @else {
+        <ul class="transactions__list">
+            @for (transaction of transactions(); track transaction.id) {
+                <app-transaction-row
+                    [transaction]="transaction"
+                    [retrying]="isRetrying(transaction.id)"
+                    (retry)="retry($event)"
+                />
+            }
+        </ul>
+        <footer class="transactions__footer">
+            <span class="transactions__count">
+                Mostrate {{ transactions().length }} di {{ totalTransactions() }}
+            </span>
+            @if (!exhausted()) {
+                <button
+                    matButton="tonal"
+                    type="button"
+                    class="transactions__load-more"
+                    (click)="loadMore()"
+                    [disabled]="isLoadingMore()"
+                >
+                    @if (isLoadingMore()) {
+                        <mat-progress-spinner class="transactions__load-more-spinner" mode="indeterminate" diameter="18" />
+                    }
+                    Carica altre
+                </button>
+            }
+        </footer>
+    }
+</section>

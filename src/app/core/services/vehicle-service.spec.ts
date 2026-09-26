@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { environment } from '../../../environments/envirornment-local';
-import { AddVehicleRequest, Vehicle, VehiclePage } from '../../shared/models/vehicle-model';
+import { AddVehicleRequest, FirmwareUpdateResult, MaintenanceRequest, RideHistoryPage, Vehicle, VehicleDetail, VehiclePage } from '../../shared/models/vehicle-model';
 import { VehicleService } from './vehicle-service';
 
 describe('VehicleService', () => {
@@ -110,6 +110,79 @@ describe('VehicleService', () => {
     it('simulateError throws a descriptive error', () => {
       expect(() => service.simulateError()).toThrowError('Vehicle backend unreachable');
     });
+
+    it('returns the vehicle detail and null for unknown ids', async () => {
+      let detail: VehicleDetail | null | undefined;
+      service.getVehicleDetail('veh-001').subscribe((v) => (detail = v));
+      await flushMockDelay(300);
+      expect(detail?.model).toBe('Tesla Model 3');
+      expect(detail?.serialNumber).toBe('5YJ3E1EAXKF000001');
+      expect(detail?.batteryType).toBeDefined();
+
+      let missing: VehicleDetail | null | undefined;
+      service.getVehicleDetail('veh-unknown').subscribe((v) => (missing = v));
+      await flushMockDelay(300);
+      expect(missing).toBeNull();
+    });
+
+    it('paginates ride history', async () => {
+      let page: RideHistoryPage | undefined;
+      service.getRideHistory('veh-001', 0).subscribe((res) => (page = res));
+      await flushMockDelay(300);
+      expect(page!.content).toHaveLength(5);
+      expect(page!.totalElements).toBe(12);
+
+      let lastPage: RideHistoryPage | undefined;
+      service.getRideHistory('veh-001', 2).subscribe((res) => (lastPage = res));
+      await flushMockDelay(300);
+      expect(lastPage!.content).toHaveLength(2);
+    });
+
+    it('schedules maintenance and exposes the new date on the detail', async () => {
+      const request: MaintenanceRequest = { date: '2026-12-01', type: 'Routine service' };
+      let done = false;
+      service.scheduleMaintenance('veh-001', request).subscribe(() => (done = true));
+      await flushMockDelay(350);
+      expect(done).toBe(true);
+
+      let detail: VehicleDetail | null | undefined;
+      service.getVehicleDetail('veh-001').subscribe((v) => (detail = v));
+      await flushMockDelay(300);
+      expect(detail?.nextMaintenanceDate).toBe('2026-12-01');
+    });
+
+    it('runs the firmware lifecycle until completion', async () => {
+      let started: FirmwareUpdateResult | undefined;
+      service.startFirmwareUpdate('veh-001').subscribe((r) => (started = r));
+      await flushMockDelay(250);
+      expect(started?.status).toBe('in_progress');
+
+      let firstStatus: FirmwareUpdateResult | undefined;
+      service.getFirmwareStatus('veh-001', started!.jobId).subscribe((r) => (firstStatus = r));
+      await flushMockDelay(200);
+      expect(firstStatus?.status).toBe('in_progress');
+
+      let finalStatus: FirmwareUpdateResult | undefined;
+      service.getFirmwareStatus('veh-001', started!.jobId).subscribe((r) => (finalStatus = r));
+      await flushMockDelay(200);
+      expect(finalStatus?.status).toBe('completed');
+    });
+
+    it('cancels an in-progress firmware job and reports failed for unknown jobs', async () => {
+      let started: FirmwareUpdateResult | undefined;
+      service.startFirmwareUpdate('veh-001').subscribe((r) => (started = r));
+      await flushMockDelay(250);
+
+      let cancelled: FirmwareUpdateResult | undefined;
+      service.cancelFirmwareUpdate('veh-001', started!.jobId).subscribe((r) => (cancelled = r));
+      await flushMockDelay(200);
+      expect(cancelled?.status).toBe('cancelled');
+
+      let unknown: FirmwareUpdateResult | undefined;
+      service.getFirmwareStatus('veh-001', 'fw-missing').subscribe((r) => (unknown = r));
+      await flushMockDelay(200);
+      expect(unknown?.status).toBe('failed');
+    });
   });
 
   describe('http mode', () => {
@@ -143,6 +216,49 @@ describe('VehicleService', () => {
       service.getVehicle('veh-1').subscribe();
       const req = httpMock.expectOne((r) => r.method === 'GET' && r.url === `${baseUrl}/veh-1`);
       req.flush({ ...payload, id: 'veh-1' });
+    });
+
+    it('GETs the vehicle detail by id', () => {
+      service.getVehicleDetail('veh-1').subscribe();
+      const req = httpMock.expectOne((r) => r.method === 'GET' && r.url === `${baseUrl}/veh-1`);
+      req.flush({ id: 'veh-1', serialNumber: 'TESTVIN12345', batteryType: 'LFP 74 kWh' });
+    });
+
+    it('GETs ride history with the page param', () => {
+      service.getRideHistory('veh-1', 2).subscribe();
+      const req = httpMock.expectOne((r) => r.method === 'GET' && r.url === `${baseUrl}/veh-1/rides`);
+      expect(req.request.params.get('page')).toBe('2');
+      req.flush({ content: [], totalElements: 0 });
+    });
+
+    it('POSTs a maintenance request', () => {
+      const request: MaintenanceRequest = { date: '2026-12-01', type: 'Routine service' };
+      service.scheduleMaintenance('veh-1', request).subscribe();
+      const req = httpMock.expectOne((r) => r.method === 'POST' && r.url === `${baseUrl}/veh-1/maintenance`);
+      expect(req.request.body).toEqual(request);
+      req.flush(null);
+    });
+
+    it('POSTs to start a firmware update', () => {
+      service.startFirmwareUpdate('veh-1').subscribe();
+      const req = httpMock.expectOne((r) => r.method === 'POST' && r.url === `${baseUrl}/veh-1/firmware-update`);
+      req.flush({ jobId: 'fw-1', status: 'in_progress' });
+    });
+
+    it('GETs the firmware update status', () => {
+      service.getFirmwareStatus('veh-1', 'fw-1').subscribe();
+      const req = httpMock.expectOne(
+        (r) => r.method === 'GET' && r.url === `${baseUrl}/veh-1/firmware-update/fw-1`
+      );
+      req.flush({ jobId: 'fw-1', status: 'completed' });
+    });
+
+    it('POSTs to cancel a firmware update', () => {
+      service.cancelFirmwareUpdate('veh-1', 'fw-1').subscribe();
+      const req = httpMock.expectOne(
+        (r) => r.method === 'POST' && r.url === `${baseUrl}/veh-1/firmware-update/cancel`
+      );
+      req.flush({ jobId: 'fw-1', status: 'cancelled' });
     });
   });
 });

@@ -11,6 +11,14 @@
     </header>
 
     @if (selectedVehicle(); as vehicle) {
+    <div class="actions-panel__vehicle">
+        <span class="status-badge" [style.--sc]="statusColor(vehicle.status)">{{ statusLabel(vehicle.status) }}</span>
+        <span class="actions-panel__stat"><i>Battery</i>{{ vehicle.batteryPercentage ?? '—' }}%</span>
+        @if (vehicle.status === 'in_service') {
+        <span class="actions-panel__stat"><i>ETA</i>{{ vehicle.etaMinutes }} min</span>
+        <span class="actions-panel__stat"><i>Left</i>{{ vehicle.remainingDistanceKm }} km</span>
+        }
+    </div>
     <div class="actions-panel__grid">
         @for (action of actions; track action) {
         @if (action === 'emergency_stop') {

@@ -1,0 +1,61 @@
+<div class="home">
+    <section class="home__metrics" aria-label="Fleet summary">
+        <div class="home__metric-card">
+            <mat-icon class="home__metric-icon" aria-hidden="true">directions_car</mat-icon>
+            <span class="home__metric-value">{{ totalVehicles() }}</span>
+            <span class="home__metric-label">Mezzi totali</span>
+        </div>
+        <div class="home__metric-card">
+            <mat-icon class="home__metric-icon" aria-hidden="true">bolt</mat-icon>
+            <span class="home__metric-value">{{ inServiceVehicles() }}</span>
+            <span class="home__metric-label">In servizio</span>
+        </div>
+        <div class="home__metric-card">
+            <mat-icon class="home__metric-icon" aria-hidden="true">payments</mat-icon>
+            <span class="home__metric-value">{{ revenueLabel() }}</span>
+            <span class="home__metric-label">Incasso oggi</span>
+        </div>
+        <div
+            class="home__metric-card"
+            [class.home__metric-card--danger]="hasAlerts()"
+        >
+            <mat-icon class="home__metric-icon" aria-hidden="true">warning</mat-icon>
+            <span class="home__metric-value">{{ activeAlerts() }}</span>
+            <span class="home__metric-label">Allarmi attivi</span>
+        </div>
+    </section>
+
+    <section class="home__grid">
+        <div class="home__panel">
+            <div class="home__panel-header">
+                <h2 class="home__panel-title">Posizione flotta</h2>
+                <a class="home__panel-link" [routerLink]="'/control-center'">Vedi tutto</a>
+            </div>
+            <app-fleet-map [vehicles]="tracking.positions()" [compact]="true" />
+        </div>
+
+        <div class="home__panel">
+            <div class="home__panel-header">
+                <h2 class="home__panel-title">Notifiche recenti</h2>
+            </div>
+            <ul class="home__notifications">
+                @for (notification of notifications(); track notification.id) {
+                    <li class="home__notification">
+                        <i
+                            class="home__notification-dot"
+                            [style.--sc]="notificationColors[notification.type]"
+                            aria-hidden="true"
+                        ></i>
+                        <div class="home__notification-body">
+                            <span class="home__notification-label">{{ notificationLabels[notification.type] }}</span>
+                            <span class="home__notification-message">{{ notification.message }}</span>
+                        </div>
+                        <time class="home__notification-time">{{ timeAgo(notification.timestamp) }}</time>
+                    </li>
+                } @empty {
+                    <li class="home__notification home__notification--empty">Nessuna notifica</li>
+                }
+            </ul>
+        </div>
+    </section>
+</div>

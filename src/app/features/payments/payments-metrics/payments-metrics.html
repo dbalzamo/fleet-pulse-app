@@ -1,0 +1,18 @@
+<section class="payments-metrics" [class.payments-metrics--loading]="loading()" aria-label="Payments summary">
+    <div class="metric">
+        <span class="metric__label">Incasso oggi</span>
+        <strong class="metric__value">{{ (summary()?.todayRevenue ?? 0) | currency: currency : 'symbol' : '1.2-2' }}</strong>
+    </div>
+    <div class="metric">
+        <span class="metric__label">Corse completate</span>
+        <strong class="metric__value">{{ summary()?.completedRides ?? 0 }}</strong>
+    </div>
+    <div class="metric">
+        <span class="metric__label">Clienti attivi</span>
+        <strong class="metric__value">{{ summary()?.activeCustomers ?? 0 }}</strong>
+    </div>
+    <div class="metric" [class.metric--danger]="hasFailedPayments()">
+        <span class="metric__label">Pagamenti falliti</span>
+        <strong class="metric__value">{{ summary()?.failedPayments ?? 0 }}</strong>
+    </div>
+</section>

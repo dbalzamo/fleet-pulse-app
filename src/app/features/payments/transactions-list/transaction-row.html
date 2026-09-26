@@ -1,0 +1,29 @@
+<li class="transaction-row">
+    <div class="transaction-row__main">
+        <span class="transaction-row__customer">{{ transaction().customerName }}</span>
+        <a class="transaction-row__ride" [routerLink]="['/fleet', transaction().vehicleId]">{{ transaction().rideId }}</a>
+    </div>
+    <time class="transaction-row__time">{{ transaction().timestamp | date: 'dd MMM, HH:mm' }}</time>
+    <span class="transaction-row__amount">{{ transaction().amount | currency: transaction().currency : 'symbol' : '1.2-2' }}</span>
+    <span class="status-badge"
+        [style.--sc]="statusColors[transaction().status]"
+        [style.--sc-bg]="statusColorsBg[transaction().status]"
+        [style.--sc-text]="statusColorsText[transaction().status]">
+        {{ statusLabels[transaction().status] }}
+    </span>
+    @if (transaction().status === 'failed') {
+        <button
+            class="transaction-row__retry"
+            mat-button
+            type="button"
+            (click)="onRetry()"
+            [disabled]="retrying()"
+            [attr.aria-label]="retrying() ? 'Addebito in riprova in corso' : 'Riprova addebito'"
+        >
+            @if (retrying()) {
+                <mat-progress-spinner class="transaction-row__spinner" mode="indeterminate" diameter="16" />
+            }
+            {{ retrying() ? 'Riprova in corso…' : 'Riprova addebito' }}
+        </button>
+    }
+</li>

@@ -1,0 +1,26 @@
+<div class="shell">
+    <app-sidebar-nav [items]="navItems" (logout)="onLogout()" />
+
+    <div class="shell__main">
+        <header class="shell__header">
+            <div class="shell__header-left">
+                <h1 class="shell__greeting">Hi, {{ greetingName() || 'Guest' }}</h1>
+                <span class="shell__date">{{ todayLabel() }}</span>
+            </div>
+            <div class="shell__header-right">
+                <button
+                    type="button"
+                    class="shell__icon-button"
+                    aria-label="Notifications (coming soon)"
+                >
+                    <mat-icon aria-hidden="true">notifications</mat-icon>
+                </button>
+                <app-account-menu [user]="menuUser()" (logout)="onLogout()" />
+            </div>
+        </header>
+
+        <main class="shell__content">
+            <router-outlet />
+        </main>
+    </div>
+</div>

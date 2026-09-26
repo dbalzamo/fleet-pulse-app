@@ -1,0 +1,90 @@
+<main class="vehicle-detail">
+    <div class="vehicle-detail__toolbar">
+        <button mat-button type="button" class="vehicle-detail__back" (click)="goBack()">
+            <span aria-hidden="true">←</span>
+            Back to fleet
+        </button>
+    </div>
+
+    @if (detailError(); as kind) {
+    <section class="vehicle-detail__error">
+        @if (kind === 'not_found') {
+        <h1>Vehicle not found</h1>
+        <p>The vehicle you are looking for is not part of the fleet (or it has been removed).</p>
+        } @else {
+        <h1>Something went wrong</h1>
+        <p>We could not load the vehicle detail. Please try again.</p>
+        }
+        <div class="vehicle-detail__error-actions">
+            <button matButton="tonal" type="button" (click)="retry()">Retry</button>
+            <button mat-button type="button" (click)="goBack()">Back to fleet</button>
+        </div>
+    </section>
+    } @else if (loading()) {
+    <section class="vehicle-detail__skeleton" aria-hidden="true">
+        <div class="vehicle-detail__skeleton-block vehicle-detail__skeleton-block--title"></div>
+        <div class="vehicle-detail__skeleton-block vehicle-detail__skeleton-block--short"></div>
+        <div class="vehicle-detail__skeleton-grid">
+            <div class="vehicle-detail__skeleton-block vehicle-detail__skeleton-card"></div>
+            <div class="vehicle-detail__skeleton-block vehicle-detail__skeleton-card"></div>
+        </div>
+    </section>
+    } @else if (detail(); as vehicle) {
+    <header class="vehicle-detail__header">
+        <h1>{{ vehicle.model }}</h1>
+        <div class="vehicle-detail__meta">
+            <span>{{ vehicle.id }}</span>
+            <span>{{ vehicle.serialNumber }}</span>
+        </div>
+        <span class="vehicle-detail__status"
+            [style.--sc]="statusColors[vehicle.status]"
+            [style.--sc-bg]="statusColorsBg[vehicle.status]"
+            [style.--sc-text]="statusColorsText[vehicle.status]">{{ statusLabels[vehicle.status] }}</span>
+
+        <div class="vehicle-detail__actions">
+            <button matButton="tonal" type="button" (click)="openScheduleMaintenance()">Schedule maintenance</button>
+            <span class="vehicle-detail__action-tooltip"
+                [matTooltip]="removalDisabled() ? 'Vehicles currently in service cannot be removed.' : ''"
+                [matTooltipDisabled]="!removalDisabled()">
+                <button matButton="tonal" type="button" class="vehicle-detail__remove"
+                    [disabled]="removalDisabled()" (click)="confirmRemoval()">
+                    Remove vehicle
+                </button>
+            </span>
+        </div>
+    </header>
+
+    @if (firmwareError(); as message) {
+    <p class="vehicle-detail__inline-error">{{ message }}</p>
+    }
+
+    <section class="vehicle-detail__firmware">
+        <div class="vehicle-detail__firmware-info">
+            @if (firmwareStatus(); as update) {
+            <span class="vehicle-detail__firmware-label"
+                [class.vehicle-detail__firmware-label--running]="firmwareRunning()">
+                Firmware update: {{ firmwareStatusLabels[update.status] }}
+            </span>
+            } @else {
+            <span class="vehicle-detail__firmware-label">Firmware version: {{ vehicle.firmwareVersion }}</span>
+            }
+        </div>
+        @if (firmwareRunning()) {
+        <button mat-button type="button" (click)="cancelFirmwareUpdate()">Cancel update</button>
+        } @else {
+        <button matButton="tonal" type="button" (click)="startFirmwareUpdate()">Update firmware</button>
+        }
+    </section>
+
+    <div class="vehicle-detail__grid">
+        <app-vehicle-battery-section class="vehicle-detail__card" [vehicle]="vehicle" />
+        <app-vehicle-maintenance-section class="vehicle-detail__card" [vehicle]="vehicle" />
+        <app-vehicle-ride-history class="vehicle-detail__card vehicle-detail__card--wide"
+            [rides]="rides()"
+            [totalElements]="ridesTotal()"
+            [loading]="ridesLoading()"
+            [error]="ridesError()"
+            (loadMore)="loadMoreRides()" />
+    </div>
+    }
+</main>

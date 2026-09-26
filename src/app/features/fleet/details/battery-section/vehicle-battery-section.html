@@ -1,0 +1,29 @@
+<section class="battery-section">
+    <header class="battery-section__header">
+        <h2>Battery &amp; range</h2>
+        @if (isLowBattery()) {
+        <span class="battery-section__alert">Low charge</span>
+        }
+    </header>
+
+    <div class="battery-section__charge">
+        <span class="battery-section__percentage">{{ vehicle().batteryPercentage }}%</span>
+        <div class="battery-section__track" role="progressbar" [attr.aria-valuenow]="vehicle().batteryPercentage"
+            aria-valuemin="0" aria-valuemax="100">
+            <div class="battery-section__fill"
+                [class.battery-section__fill--low]="isLowBattery()"
+                [style.width.%]="vehicle().batteryPercentage"></div>
+        </div>
+    </div>
+
+    <dl class="battery-section__details">
+        <div class="battery-section__detail">
+            <dt>Estimated range</dt>
+            <dd>{{ rangeLabel() }} km</dd>
+        </div>
+        <div class="battery-section__detail">
+            <dt>Battery</dt>
+            <dd>{{ vehicle().batteryType }}</dd>
+        </div>
+    </dl>
+</section>

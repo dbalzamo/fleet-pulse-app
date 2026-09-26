@@ -18,6 +18,8 @@ describe('EmergencyActionsPanelComponent', () => {
     status: 'in_service',
     latitude: 45.47,
     longitude: 9.2,
+    heading: 90,
+    batteryPercentage: 87,
     etaMinutes: 12,
     remainingDistanceKm: 6.4,
   };

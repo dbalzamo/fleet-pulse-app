@@ -40,26 +40,26 @@
         width: 10px;
         height: 10px;
         border-radius: 50%;
-        background: var(--status-attention);
+        background: var(--color-warning);
     }
 
     &--connected {
         i {
-            background: var(--status-ok);
+            background: var(--color-success);
         }
     }
 
     &--polling {
         i {
-            background: var(--status-attention);
+            background: var(--color-warning);
         }
     }
 
     &--disconnected {
-        color: var(--status-emergency);
+        color: var(--color-danger-text);
 
         i {
-            background: var(--status-emergency);
+            background: var(--color-danger);
         }
     }
 }

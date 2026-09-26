@@ -1,0 +1,14 @@
+<li class="customer-row">
+    <button type="button" class="customer-row__main" (click)="open.emit(customer())">
+        <span class="customer-row__avatar" [style.--sc]="accent()" aria-hidden="true">
+            {{ initials(customer().name) }}
+        </span>
+        <span class="customer-row__body">
+            <strong class="customer-row__name">{{ customer().name }}</strong>
+            <span class="customer-row__rides">
+                {{ customer().totalRides }} {{ customer().totalRides === 1 ? 'corsa' : 'corse' }}
+            </span>
+        </span>
+        <mat-icon class="customer-row__chevron" aria-hidden="true">chevron_right</mat-icon>
+    </button>
+</li>

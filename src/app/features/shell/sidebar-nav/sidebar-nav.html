@@ -1,0 +1,36 @@
+<aside class="sidebar">
+    <div class="sidebar__brand" title="FleetPulse">
+        <mat-icon aria-hidden="true">directions_car</mat-icon>
+        <span class="sidebar__brand-name">FleetPulse</span>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Main navigation">
+        <ul class="sidebar__list">
+            @for (item of items(); track item.id) {
+                <li class="sidebar__item">
+                    <a
+                        class="sidebar__link"
+                        [routerLink]="item.route"
+                        routerLinkActive="sidebar__link--active"
+                        [title]="item.label"
+                        [attr.aria-label]="item.label"
+                    >
+                        <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+
+    <div class="sidebar__footer">
+        <button
+            class="sidebar__link sidebar__link--logout"
+            type="button"
+            [title]="logoutLabel()"
+            [attr.aria-label]="logoutLabel()"
+            (click)="handleLogout()"
+        >
+            <mat-icon aria-hidden="true">logout</mat-icon>
+        </button>
+    </div>
+</aside>

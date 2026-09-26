@@ -1,0 +1,32 @@
+.placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 80px 24px;
+    border-radius: var(--fleet-radius);
+    border: 1px solid var(--fleet-border);
+    background: var(--color-surface-raised);
+    text-align: center;
+}
+
+.placeholder__icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: var(--color-accent-text);
+}
+
+.placeholder__title {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.placeholder__description {
+    margin: 0;
+    max-width: 420px;
+    color: var(--fleet-muted);
+}

@@ -1,0 +1,59 @@
+<section class="customers">
+    <header class="customers__header">
+        <h2 class="customers__title">Clienti</h2>
+        <mat-form-field appearance="outline" class="customers__search">
+            <mat-icon class="customers__search-icon" matPrefix aria-hidden="true">search</mat-icon>
+            <mat-label>Cerca cliente</mat-label>
+            <input matInput type="text" placeholder="Nome..." [(ngModel)]="searchQuery" aria-label="Cerca cliente" />
+        </mat-form-field>
+    </header>
+
+    @if (loading()) {
+        <div class="customers__loading">
+            <mat-progress-spinner mode="indeterminate" diameter="40" />
+            <p>Caricamento clienti...</p>
+        </div>
+    } @else if (error() !== null) {
+        <div class="customers__state">
+            <p>{{ error() }}</p>
+            <button matButton="tonal" type="button" (click)="reload()">Riprova</button>
+        </div>
+    } @else if (customers().length === 0) {
+        <div class="customers__state">
+            @if (searchQuery().trim() !== '') {
+                <p>Nessun cliente corrisponde alla ricerca.</p>
+            } @else {
+                <p>Nessun cliente registrato.</p>
+            }
+        </div>
+    } @else {
+        <ul class="customers__list">
+            @for (customer of customers(); track customer.id) {
+                <app-customer-row
+                    [customer]="customer"
+                    [accent]="avatarColor(customer.name)"
+                    (open)="openCustomer($event)"
+                />
+            }
+        </ul>
+        <footer class="customers__footer">
+            <span class="customers__count">
+                Mostrati {{ customers().length }} di {{ totalCustomers() }}
+            </span>
+            @if (!exhausted()) {
+                <button
+                    matButton="tonal"
+                    type="button"
+                    class="customers__load-more"
+                    (click)="loadMore()"
+                    [disabled]="isLoadingMore()"
+                >
+                    @if (isLoadingMore()) {
+                        <mat-progress-spinner class="customers__load-more-spinner" mode="indeterminate" diameter="18" />
+                    }
+                    Carica altri
+                </button>
+            }
+        </footer>
+    }
+</section>

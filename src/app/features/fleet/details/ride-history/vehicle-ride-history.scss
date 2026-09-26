@@ -1,0 +1,84 @@
+.ride-history {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ride-history__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+
+    h2 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 500;
+    }
+}
+
+.ride-history__count {
+    font-size: 12px;
+    color: var(--fleet-muted);
+}
+
+.ride-history__state {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding: 20px 0;
+    font-size: 13px;
+    color: var(--fleet-muted);
+}
+
+.ride-history__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+
+    th,
+    td {
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--fleet-border);
+    }
+
+    th {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--fleet-muted);
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+}
+
+.ride-history__id {
+    font-weight: 500;
+}
+
+.ride-history__duration {
+    white-space: nowrap;
+}
+
+.ride-history__outcome {
+    --sc: var(--color-success);
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--sc-text, var(--sc));
+    background: var(--sc-bg, color-mix(in srgb, var(--sc) 16%, transparent));
+    white-space: nowrap;
+}
+
+.ride-history__more {
+    align-self: flex-start;
+}
+
+.ride-history__more ::ng-deep mat-progress-spinner {
+    margin-right: 6px;
+}

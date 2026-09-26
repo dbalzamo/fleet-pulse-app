@@ -1,0 +1,80 @@
+.battery-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.battery-section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    h2 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 500;
+    }
+}
+
+.battery-section__alert {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-warning-text);
+    background: var(--color-warning-bg);
+}
+
+.battery-section__charge {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.battery-section__percentage {
+    min-width: 52px;
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.battery-section__track {
+    flex: 1;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--color-track);
+    overflow: hidden;
+}
+
+.battery-section__fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--color-accent);
+    transition: width 0.5s ease;
+
+    &--low {
+        background: var(--color-warning);
+    }
+}
+
+.battery-section__details {
+    margin: 0;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.battery-section__detail {
+    dt {
+        margin: 0 0 2px;
+        font-size: 12px;
+        color: var(--fleet-muted);
+    }
+
+    dd {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+    }
+}

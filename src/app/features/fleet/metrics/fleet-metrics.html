@@ -4,22 +4,22 @@
         <strong class="metric__value">{{ metrics().total }}</strong>
     </div>
     <div class="metric">
-        <span class="metric__dot" style="background: var(--status-available)"></span>
+        <span class="metric__dot" style="background: var(--color-success)"></span>
         <span class="metric__label">Available</span>
         <strong class="metric__value">{{ metrics().available }}</strong>
     </div>
     <div class="metric">
-        <span class="metric__dot" style="background: var(--status-in_service)"></span>
+        <span class="metric__dot" style="background: var(--color-accent)"></span>
         <span class="metric__label">In Service</span>
         <strong class="metric__value">{{ metrics().inService }}</strong>
     </div>
     <div class="metric">
-        <span class="metric__dot" style="background: var(--status-maintenance)"></span>
+        <span class="metric__dot" style="background: var(--color-warning)"></span>
         <span class="metric__label">Maintenance</span>
         <strong class="metric__value">{{ metrics().maintenance }}</strong>
     </div>
     <div class="metric">
-        <span class="metric__dot" style="background: var(--status-charging)"></span>
+        <span class="metric__dot" style="background: var(--color-neutral-secondary)"></span>
         <span class="metric__label">Charging</span>
         <strong class="metric__value">{{ metrics().charging }}</strong>
     </div>

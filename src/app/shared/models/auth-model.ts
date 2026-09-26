@@ -30,3 +30,22 @@ export interface AuthState {
     tokens: AuthResponse | null;
     status: AuthStatus;
 }
+
+export interface AuthenticatedUser {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    avatarUrl?: string;
+}
+
+export interface ChangePasswordRequest {
+    currentPassword: string;
+    newPassword: string;
+}
+
+export interface PasswordFormModel {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+}

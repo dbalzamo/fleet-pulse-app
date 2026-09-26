@@ -1,5 +1,5 @@
 import { computed, inject } from "@angular/core";
-import { AuthState, LoginReq, RegisterReq } from "../../shared/models/auth-model";
+import { AuthState, AuthenticatedUser, LoginReq, RegisterReq } from "../../shared/models/auth-model";
 import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from "@ngrx/signals";
 import { AuthService } from "../services/auth-service";
 import { Router } from "@angular/router";
@@ -8,10 +8,15 @@ import { NotificationService } from "../services/notification-service";
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 
-const initialState: AuthState = {
+interface AuthStoreState extends AuthState {
+    user: AuthenticatedUser | null;
+}
+
+const initialState: AuthStoreState = {
     tokens: null,
     status: 'idle',
-}
+    user: null,
+};
 
 export const AuthStore = signalStore(
     { providedIn: 'root' },
@@ -21,7 +26,17 @@ export const AuthStore = signalStore(
         isAuth: computed(() => store.status() === 'authenticated'),
         isLoading: computed(() => store.status() === 'loading'),
         accessToken: computed(() => store.tokens()?.accessToken ?? null),
+        currentUser: computed(() => store.user()),
     })),
+
+    withMethods((store, authService = inject(AuthService), router = inject(Router)) => ({
+        invalidateSession: () => {
+            authService.clearTokens();
+            patchState(store, { tokens: null, status: 'unauthenticated', user: null });
+            router.navigate(['/login']);
+        },
+    })),
+
     withMethods((
         store,
         authService = inject(AuthService),
@@ -40,11 +55,10 @@ export const AuthStore = signalStore(
                                 tapResponse({
                                     next: (newTokens) => {
                                         authService.saveTokens(newTokens);
-                                        patchState(store, { tokens: newTokens, status: 'authenticated' });
+                                        patchState(store, { tokens: newTokens, status: 'authenticated', user: null });
                                     },
                                     error: () => {
-                                        authService.clearTokens();
-                                        patchState(store, { tokens: null, status: 'unauthenticated' });
+                                        store.invalidateSession();
                                     }
                                 })
                             );
@@ -66,7 +80,7 @@ export const AuthStore = signalStore(
                         tapResponse({
                             next: (authResponse) => {
                                 authService.saveTokens(authResponse);
-                                patchState(store, { tokens: authResponse, status: 'authenticated' });
+                                patchState(store, { tokens: authResponse, status: 'authenticated', user: null });
                                 router.navigate(['/dashboard']);
                                 snackBar.success('Login success');
                             },
@@ -86,7 +100,7 @@ export const AuthStore = signalStore(
                         tapResponse({
                             next: (authResponse) => {
                                 authService.saveTokens(authResponse);
-                                patchState(store, { tokens: authResponse, status: 'authenticated' });
+                                patchState(store, { tokens: authResponse, status: 'authenticated', user: null });
                                 router.navigate(['/dashboard']);
                                 snackBar.success('Account created successfully!');
                             },
@@ -98,28 +112,32 @@ export const AuthStore = signalStore(
                 )),
             )
         ),
+        loadCurrentUser: rxMethod<void>(
+            pipe(
+                exhaustMap(() => (
+                    authService.getCurrentUser().pipe(
+                        tapResponse({
+                            next: (user) => patchState(store, { user }),
+                            error: () => {
+                                store.invalidateSession();
+                            }
+                        })
+                    )
+                ))
+            )
+        ),
         logout: rxMethod<void>(
             pipe(
                 exhaustMap(() => {
                     const refreshToken = authService.getRefreshToken();
                     if (!refreshToken) {
-                        authService.clearTokens();
-                        patchState(store, { tokens: null, status: 'unauthenticated' });
-                        router.navigate(['/login']);
+                        store.invalidateSession();
                         return [];
                     }
                     return authService.logout(refreshToken).pipe(
                         tapResponse({
-                            next: () => {
-                                authService.clearTokens();
-                                patchState(store, { tokens: null, status: 'unauthenticated' });
-                                router.navigate(['/login']);
-                            },
-                            error: () => {
-                                authService.clearTokens();
-                                patchState(store, { tokens: null, status: 'unauthenticated' });
-                                router.navigate(['/login']);
-                            }
+                            next: () => store.invalidateSession(),
+                            error: () => store.invalidateSession()
                         })
                     );
                 })

@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>Schedule maintenance</h2>
+
+<mat-dialog-content>
+    <form [formRoot]="maintenanceForm" class="schedule-maintenance__form">
+        <mat-form-field appearance="outline">
+            <mat-label>Date</mat-label>
+            <input matInput type="date" [formField]="maintenanceForm.date" />
+        </mat-form-field>
+        @if (maintenanceForm.date().touched() && maintenanceForm.date().invalid()) {
+        @for (error of maintenanceForm.date().errors(); track error.message) {
+        <mat-error>{{ error.message }}</mat-error>
+        }
+        }
+
+        <mat-form-field appearance="outline">
+            <mat-label>Intervention type</mat-label>
+            <mat-select [formField]="maintenanceForm.type">
+                @for (type of interventionTypes; track type) {
+                <mat-option [value]="type">{{ type }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        @if (maintenanceForm.type().touched() && maintenanceForm.type().invalid()) {
+        @for (error of maintenanceForm.type().errors(); track error.message) {
+        <mat-error>{{ error.message }}</mat-error>
+        }
+        }
+
+        <mat-form-field appearance="outline">
+            <mat-label>Technician / workshop (optional)</mat-label>
+            <input matInput type="text" placeholder="e.g. North Depot — Mario R." [formField]="maintenanceForm.assignedTo" />
+        </mat-form-field>
+
+        <button matButton="tonal" type="submit" class="schedule-maintenance__submit"
+            [disabled]="maintenanceForm().invalid() || maintenanceForm().submitting()">
+            @if (maintenanceForm().submitting()) {
+            Scheduling...
+            } @else {
+            Schedule service
+            }
+        </button>
+    </form>
+</mat-dialog-content>

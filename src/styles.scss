@@ -8,37 +8,135 @@
 
 html {
   height: 100%;
+  color-scheme: dark;
   @include mat.theme((color: (primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
       typography: Roboto,
       density: 0,
     ));
-  --status-available: #2e6b4f;
-  --status-in_service: #1d5fa8;
-  --status-maintenance: #965f0f;
-  --status-charging: #0f766e;
-  --status-out_of_service: #8b1e2d;
-  --status-ok: #2e6b4f;
-  --status-attention: #b45309;
-  --status-emergency: #ba1a1a;
+
+  // =====================================================================
+  // DESIGN TOKENS — single source of truth for the app palette.
+  // Named by semantic role, not by literal color. No component must hardcode
+  // a color value; always reference these variables.
+  // =====================================================================
+
+  // ----- Surfaces (dark, minimal: page -> card -> elevated) -----
+  --color-surface-base: #000000; // page background
+  --color-surface-raised: #111111; // cards / panels on top of the page background
+  --color-surface-elevated: #1a1a1a; // raised layer (dropdowns, overlays, tonal buttons)
+  --color-surface-contrast: #f5f3f0; // off-white: highlight strip / emphasized element,
+  // and future light-theme page background
+
+  // ----- Text on dark surfaces -----
+  --color-text-primary: #f5f3f0;
+  --color-text-secondary: #a0a0a0;
+  --color-text-disabled: #737373;
+  --color-text-inverse: #ffffff; // text on solid colored fills (primary button, snackbars)
+
+  // ----- Semantic roles -----
+  --color-accent: #276ef1; // brand / primary action / focus ring / "In Service"
+  --color-accent-bg: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  --color-accent-text: #7aa6f8; // vivid blue for text/glyphs on dark backgrounds
+
+  --color-success: #3aa76d; // success / "Available" / "Paid"
+  --color-success-bg: color-mix(in srgb, var(--color-success) 16%, transparent);
+  --color-success-text: #5ccb8a;
+  --color-success-strong: #1e7a4c; // filled success surface that needs white text (WCAG AA)
+
+  --color-warning: #ffc043; // warning / "Maintenance" / "Processing"
+  --color-warning-bg: color-mix(in srgb, var(--color-warning) 16%, transparent);
+  --color-warning-text: #ffd66b;
+
+  --color-danger: #d44333; // danger / "Out of Service" / "Failed" / destructive / emergency
+  --color-danger-bg: color-mix(in srgb, var(--color-danger) 16%, transparent);
+  --color-danger-text: #f07463;
+
+  --color-neutral-secondary: #99644c; // neutral secondary state / "Charging"
+  --color-neutral-secondary-bg: color-mix(in srgb, var(--color-neutral-secondary) 16%, transparent);
+  --color-neutral-secondary-text: #c9987b;
+
+  // ----- Dedicated lines & tracks -----
+  --color-border: #262626; // hairline separators
+  --color-track: #1e1e1e; // progress-bar tracks
+
+  // ----- Status aliases: state -> semantic role -----
+  --status-available: var(--color-success);
+  --status-in_service: var(--color-accent);
+  --status-maintenance: var(--color-warning);
+  --status-charging: var(--color-neutral-secondary);
+  --status-out_of_service: var(--color-danger);
+  --status-ok: var(--color-success);
+  --status-attention: var(--color-warning);
+  --status-emergency: var(--color-danger);
+
+  // ----- Per-status attenuated bg + vivid text variants (vehicle badges) -----
+  --color-available-bg: var(--color-success-bg);
+  --color-available-text: var(--color-success-text);
+  --color-in_service-bg: var(--color-accent-bg);
+  --color-in_service-text: var(--color-accent-text);
+  --color-maintenance-bg: var(--color-warning-bg);
+  --color-maintenance-text: var(--color-warning-text);
+  --color-charging-bg: var(--color-neutral-secondary-bg);
+  --color-charging-text: var(--color-neutral-secondary-text);
+  --color-out_of_service-bg: var(--color-danger-bg);
+  --color-out_of_service-text: var(--color-danger-text);
+
+  // ----- Per-status attenuated bg + vivid text variants (payment badges) -----
+  --color-paid-bg: var(--color-success-bg);
+  --color-paid-text: var(--color-success-text);
+  --color-processing-bg: var(--color-warning-bg);
+  --color-processing-text: var(--color-warning-text);
+  --color-failed-bg: var(--color-danger-bg);
+  --color-failed-text: var(--color-danger-text);
+
+  // ----- Other semantic states (ride outcomes, notifications, tracking) -----
+  --color-completed-bg: var(--color-success-bg);
+  --color-completed-text: var(--color-success-text);
+  --color-cancelled-bg: var(--color-warning-bg);
+  --color-cancelled-text: var(--color-warning-text);
+  --color-interrupted-bg: var(--color-danger-bg);
+  --color-interrupted-text: var(--color-danger-text);
+  --color-battery_low-bg: var(--color-warning-bg);
+  --color-battery_low-text: var(--color-warning-text);
+  --color-maintenance_completed-bg: var(--color-success-bg);
+  --color-maintenance_completed-text: var(--color-success-text);
+  --color-new_customer-bg: var(--color-success-bg);
+  --color-new_customer-text: var(--color-success-text);
+  --color-attention-bg: var(--color-warning-bg);
+  --color-attention-text: var(--color-warning-text);
+  --color-emergency-bg: var(--color-danger-bg);
+  --color-emergency-text: var(--color-danger-text);
+
+  // ----- Angular Material tokens mapped onto the app palette -----
+  --mat-sys-primary: var(--color-accent);
+  --mat-sys-on-primary: var(--color-text-inverse);
+  --mat-sys-secondary-container: var(--color-surface-elevated);
+  --mat-sys-on-secondary-container: var(--color-text-primary);
+  --mat-sys-surface: var(--color-surface-raised);
+  --mat-sys-surface-container: var(--color-surface-raised);
+  --mat-sys-surface-container-high: var(--color-surface-elevated);
+  --mat-sys-on-surface: var(--color-text-primary);
+  --mat-sys-on-surface-variant: var(--color-text-secondary);
+  --mat-sys-outline: var(--color-border);
+  --mat-sys-level3: 0 8px 24px rgb(0 0 0 / 0.55);
+
+  // ----- Legacy fleet tokens (kept as aliases to the new palette) -----
   --fleet-radius: 16px;
-  --fleet-muted: #5f6368;
-  --fleet-border: color-mix(in srgb, var(--mat-sys-on-surface) 12%, transparent);
-  --fleet-bg: color-mix(in srgb, var(--mat-sys-surface-container) 65%, transparent);
+  --fleet-muted: var(--color-text-secondary);
+  --fleet-border: var(--color-border);
+  --fleet-bg: var(--color-surface-raised);
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light dark;
+  // The application is a forced dark theme.
+  color-scheme: dark;
 
   // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
+  // the centralized design tokens.
+  background-color: var(--color-surface-base);
+  color: var(--color-text-primary);
   font: var(--mat-sys-body-medium);
 
   // Reset the user agent margin.
@@ -46,55 +144,150 @@ body {
   height: 100%;
 }
 
+// Consistent accent focus ring for every interactive element.
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 /* You can add global styles to this file, and also import other style files */
 /* NOTIFICATIONS */
 .snack-error {
-  @include mat.snack-bar-overrides((container-color: #ba1a1a, // error color palette
-      supporting-text-color: #ffffff,
+  @include mat.snack-bar-overrides((container-color: var(--color-danger),
+      supporting-text-color: var(--color-text-inverse),
     ));
-  --mat-snack-bar-button-color: #ffdad6; // error 90 color palette
+  --mat-snack-bar-button-color: var(--color-text-inverse);
 }
 
 .snack-success {
-  @include mat.snack-bar-overrides((container-color: #2e6b4f,
-      supporting-text-color: #ffffff,
+  @include mat.snack-bar-overrides((container-color: var(--color-success-strong),
+      supporting-text-color: var(--color-text-inverse),
     ));
-  --mat-snack-bar-button-color: #b8f0d0;
+  --mat-snack-bar-button-color: var(--color-text-inverse);
 }
 
 /* ================= MAP (Leaflet) ================= */
 /* Markers are injected by Leaflet as raw HTML (outside Angular emulated
    encapsulation), so their styles live here globally. */
-.vehicle-marker {
-  --sc: var(--status-ok);
-  display: block;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--sc);
-  border: 2px solid #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-  transition: width 0.15s ease, height 0.15s ease;
-}
-
-.vehicle-marker--selected {
-  width: 20px;
-  height: 20px;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--sc) 30%, transparent);
-}
-
 .map-shell .leaflet-container {
   width: 100%;
   height: 100%;
   border-radius: var(--fleet-radius);
   font-family: var(--mat-sys-body-medium);
+  background: var(--color-surface-base);
+}
+
+/* OSM tiles are light by design; map them onto the app's dark theme with a
+   CSS colour filter. CartoDB Dark Matter was evaluated instead, but as of 2026
+   it requires an API key and watermarks unauthenticated requests, so the
+   no-key OSM + filter approach is the safer MVP choice. */
+.map-shell .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.7);
 }
 
 .map-shell .leaflet-control-attribution {
   font-size: 10px;
   color: var(--fleet-muted);
+  background: rgb(0 0 0 / 0.45);
 }
 
 .map-shell .leaflet-control-zoom a {
-  color: var(--mat-sys-on-surface);
+  color: var(--color-text-primary);
+}
+
+/* Top-view car marker, rotated according to the vehicle heading. */
+.vehicle-marker {
+  --sc: var(--color-success);
+  --heading: 0deg;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(var(--heading));
+  transform-origin: center;
+  transition: transform 0.9s ease-out;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.55));
+}
+
+.vehicle-marker__car {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.vehicle-marker__body {
+  fill: var(--sc);
+}
+
+.vehicle-marker__glass {
+  fill: rgb(0 0 0 / 0.35);
+}
+
+.vehicle-marker--selected {
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--sc) 75%, transparent))
+    drop-shadow(0 1px 3px rgb(0 0 0 / 0.6));
+}
+
+/* Dark-themed Leaflet popup (raw DOM, outside Angular encapsulation). */
+.map-shell .leaflet-popup-content-wrapper {
+  background: var(--color-surface-elevated);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: var(--mat-sys-level3);
+}
+
+.map-shell .leaflet-popup-tip {
+  background: var(--color-surface-elevated);
+}
+
+.map-shell .leaflet-popup-close-button {
+  color: var(--color-text-secondary);
+}
+
+.vehicle-popup__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vehicle-popup__id {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.vehicle-popup__status {
+  --sc: var(--status-ok);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sc);
+  background: color-mix(in srgb, var(--sc) 16%, transparent);
+  white-space: nowrap;
+}
+
+.vehicle-popup__stats {
+  display: flex;
+  gap: 16px;
+  margin: 10px 0 0;
+  padding: 0;
+
+  div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  dt {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--fleet-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+  }
 }

@@ -22,7 +22,7 @@
 
 .vehicle-card__model {
     font-size: 17px;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .vehicle-card__vin {
@@ -35,13 +35,13 @@
 }
 
 .status-badge {
-    --sc: var(--status-available);
+    --sc: var(--color-success);
     padding: 4px 10px;
     border-radius: 999px;
     font-size: 12px;
-    font-weight: 600;
-    color: var(--sc);
-    background: color-mix(in srgb, var(--sc) 14%, transparent);
+    font-weight: 500;
+    color: var(--sc-text, var(--sc));
+    background: var(--sc-bg, color-mix(in srgb, var(--sc) 16%, transparent));
     white-space: nowrap;
 }
 
@@ -78,15 +78,14 @@
 .vehicle-card__battery-track {
     height: 8px;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--mat-sys-on-surface) 12%, transparent);
+    background: var(--color-track);
     overflow: hidden;
 }
 
 .vehicle-card__battery-fill {
-    --sc: var(--status-available);
     height: 100%;
     border-radius: 999px;
-    background: var(--sc);
+    background: var(--color-accent);
     transition: width 0.5s ease;
 }
 
@@ -104,5 +103,5 @@
     align-items: center;
     justify-content: center;
     border-radius: var(--fleet-radius);
-    background: color-mix(in srgb, var(--mat-sys-surface) 70%, transparent);
+    background: color-mix(in srgb, var(--color-surface-base) 72%, transparent);
 }

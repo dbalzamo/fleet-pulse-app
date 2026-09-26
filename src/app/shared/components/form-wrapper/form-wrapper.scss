@@ -2,7 +2,7 @@ main {
     min-height: 100dvh;
 
     section {
-        border: 1px solid grey;
+        border: 1px solid var(--color-border);
         border-radius: 1rem;
         max-width: fit-content;
         padding: 1rem;

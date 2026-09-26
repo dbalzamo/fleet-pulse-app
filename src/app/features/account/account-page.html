@@ -1,0 +1,79 @@
+<div class="account">
+    <section class="account__card">
+        <h2 class="account__title">Il mio account</h2>
+        <div class="account__profile">
+            <span class="account__avatar">{{ initial() }}</span>
+            <div class="account__details">
+                <span class="account__detail-label">Nome</span>
+                <span class="account__detail-value" data-testid="account-name">{{ currentUser()?.name ?? '—' }}</span>
+                <span class="account__detail-label">Email</span>
+                <span class="account__detail-value" data-testid="account-email">{{ currentUser()?.email ?? '—' }}</span>
+                <span class="account__detail-label">Ruolo</span>
+                <span class="account__detail-value" data-testid="account-role">{{ currentUser()?.role ?? '—' }}</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="account__card">
+        <h2 class="account__title">Cambia password</h2>
+        <form [formRoot]="passwordForm" class="account__form">
+            <mat-form-field appearance="outline">
+                <mat-label>Password attuale</mat-label>
+                <input
+                    matInput
+                    type="password"
+                    autocomplete="current-password"
+                    [formField]="passwordForm.currentPassword"
+                />
+            </mat-form-field>
+            @if (passwordForm.currentPassword().touched() && passwordForm.currentPassword().invalid()) {
+                @for (error of passwordForm.currentPassword().errors(); track error.message) {
+                    <mat-error>{{ error.message }}</mat-error>
+                }
+            }
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nuova password</mat-label>
+                <input
+                    matInput
+                    type="password"
+                    autocomplete="new-password"
+                    [formField]="passwordForm.newPassword"
+                />
+            </mat-form-field>
+            @if (passwordForm.newPassword().touched() && passwordForm.newPassword().invalid()) {
+                @for (error of passwordForm.newPassword().errors(); track error.message) {
+                    <mat-error>{{ error.message }}</mat-error>
+                }
+            }
+
+            <mat-form-field appearance="outline">
+                <mat-label>Conferma nuova password</mat-label>
+                <input
+                    matInput
+                    type="password"
+                    autocomplete="new-password"
+                    [formField]="passwordForm.confirmPassword"
+                />
+            </mat-form-field>
+            @if (passwordForm.confirmPassword().touched() && passwordForm.confirmPassword().invalid()) {
+                @for (error of passwordForm.confirmPassword().errors(); track error.message) {
+                    <mat-error>{{ error.message }}</mat-error>
+                }
+            }
+
+            <button
+                matButton="tonal"
+                type="submit"
+                class="account__submit"
+                [disabled]="passwordForm().invalid() || passwordForm().submitting()"
+            >
+                @if (passwordForm().submitting() || isSubmitting()) {
+                    Updating...
+                } @else {
+                    Aggiorna password
+                }
+            </button>
+        </form>
+    </section>
+</div>

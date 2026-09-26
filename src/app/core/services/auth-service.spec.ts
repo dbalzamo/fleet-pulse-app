@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { LoginReq, RegisterReq, AuthResponse } from '../../shared/models/auth-model';
+import { LoginReq, RegisterReq, AuthResponse, ChangePasswordRequest, AuthenticatedUser } from '../../shared/models/auth-model';
 import { AuthService } from './auth-service';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { environment } from '../../../environments/envirornment-local';
@@ -25,10 +25,12 @@ describe('AuthService', () => {
     });
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
+    environment.useMock = false;
     localStorage.clear();
   });
 
   afterEach(() => {
+    environment.useMock = true;
     localStorage.clear();
   });
 
@@ -89,6 +91,79 @@ describe('AuthService', () => {
     it('should return null when no tokens exist', () => {
       expect(service.getAccessToken()).toBeNull();
       expect(service.getRefreshToken()).toBeNull();
+    });
+  });
+
+  describe('HTTP endpoints', () => {
+    it('posts the refresh token to the logout endpoint', () => {
+      environment.useMock = false;
+      service.logout('refresh-uuid').subscribe();
+      const req = httpMock.expectOne(`${environment.apiPath + environment.apiUrlAuth}/logout`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ refreshToken: 'refresh-uuid' });
+      req.flush(null);
+    });
+
+    it('fetches the current user from /me', () => {
+      environment.useMock = false;
+      service.getCurrentUser().subscribe();
+      const req = httpMock.expectOne(`${environment.apiPath + environment.apiUrlAuth}/me`);
+      expect(req.request.method).toBe('GET');
+      req.flush({ id: 'user-1', name: 'Jhon', email: 'e@e.it', role: 'Mgr' });
+    });
+
+    it('posts the change-password payload', () => {
+      environment.useMock = false;
+      const payload: ChangePasswordRequest = { currentPassword: 'old-pass', newPassword: 'new-pass' };
+      service.changePassword(payload).subscribe();
+      const req = httpMock.expectOne(`${environment.apiPath + environment.apiUrlAuth}/change-password`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(payload);
+      req.flush(null);
+    });
+  });
+
+  describe('Mock mode', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      environment.useMock = true;
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('login returns a fake access token with a future expiration', async () => {
+      let response: AuthResponse | undefined;
+      service.login({ username: 'user', password: 'password' }).subscribe((res) => (response = res));
+      await vi.advanceTimersByTimeAsync(400);
+      expect(response).toBeDefined();
+      expect(response!.accessToken).toContain('.');
+      expect(response!.refreshToken).toContain('mock-refresh');
+      service.saveTokens(response!);
+      expect(service.isTokenExpired()).toBe(false);
+    });
+
+    it('logout resolves without calling the backend', async () => {
+      let completed = false;
+      service.logout('refresh-uuid').subscribe(() => (completed = true));
+      await vi.advanceTimersByTimeAsync(150);
+      expect(completed).toBe(true);
+    });
+
+    it('getCurrentUser returns the mock user', async () => {
+      let user: AuthenticatedUser | undefined;
+      service.getCurrentUser().subscribe((res) => (user = res));
+      await vi.advanceTimersByTimeAsync(200);
+      expect(user).toBeDefined();
+      expect(user!.email).toBe('jhon.black@fleetpulse.io');
+    });
+
+    it('changePassword resolves successfully', async () => {
+      let completed = false;
+      service.changePassword({ currentPassword: 'a', newPassword: 'b' }).subscribe(() => (completed = true));
+      await vi.advanceTimersByTimeAsync(300);
+      expect(completed).toBe(true);
     });
   });
 });

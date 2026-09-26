@@ -1,0 +1,28 @@
+<section class="maintenance-section">
+    <header class="maintenance-section__header">
+        <h2>Maintenance</h2>
+        @if (isNextMaintenanceOverdue()) {
+        <span class="maintenance-section__overdue">Overdue</span>
+        }
+    </header>
+
+    <dl class="maintenance-section__grid">
+        <div class="maintenance-section__item">
+            <dt>Last service</dt>
+            <dd>{{ lastMaintenanceLabel() }}</dd>
+        </div>
+        <div class="maintenance-section__item"
+            [class.maintenance-section__item--overdue]="isNextMaintenanceOverdue()">
+            <dt>Next scheduled service</dt>
+            <dd>{{ nextMaintenanceLabel() }}</dd>
+        </div>
+        <div class="maintenance-section__item">
+            <dt>Total distance</dt>
+            <dd>{{ totalKmLabel() }} km</dd>
+        </div>
+        <div class="maintenance-section__item">
+            <dt>Firmware</dt>
+            <dd>{{ vehicle().firmwareVersion }}</dd>
+        </div>
+    </dl>
+</section>
